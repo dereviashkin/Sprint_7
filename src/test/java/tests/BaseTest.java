@@ -3,7 +3,7 @@ package tests;
 import io.restassured.RestAssured;
 import org.junit.Before;
 
-public class BeforeAndAfter {
+public abstract class BaseTest {
 
     @Before
     public void setUp() {
