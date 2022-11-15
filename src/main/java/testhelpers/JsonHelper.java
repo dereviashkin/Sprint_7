@@ -33,8 +33,13 @@ public class JsonHelper {
         response.then().assertThat().body(key, equalTo(value));
     }
 
+    @Step("Check if response boolean value is expected")
+    public static void validateResponseValueBoolean(Response response, String key, boolean value) {
+        response.then().assertThat().body(key, equalTo(value));
+    }
+
     @Step("Print response body to console")
     public static void printResponseBodyToConsole(Response response) {
-        System.out.println(response.body().asString());
+        response.prettyPrint();
     }
 }
