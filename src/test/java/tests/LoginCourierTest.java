@@ -1,68 +1,68 @@
 package tests;
 
+import entities.Courier;
 import io.qameta.allure.Description;
-import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.ValidatableResponse;
+import io.qameta.allure.TmsLink;
+import io.restassured.response.Response;
 import org.junit.Test;
 
 import static data.Endpoints.getCourierLoginEndpoint;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static testhelpers.JsonHelper.*;
 
 public class LoginCourierTest extends BeforeAndAfter {
 
     @Test
-    @DisplayName("****")
     @Description("Логин существующим курьером, все поля заполнены правильно")
+    @TmsLink("TestCase-Login-1")
     public void loginCorrectSuccess() {
-//        Courier courier = new Courier("KD6-3.7", "Joi", "Nexus-9 replicant");
-        String json = "{\"login\":\"KD6-3.7\",\"password\":\"Joi\"}";
-        ValidatableResponse response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(json)
-                .when()
-                .post(getCourierLoginEndpoint())
-                .then()
-                .statusCode(200)
-                .and()
-                .assertThat().body("id", notNullValue());
+        Courier courier = new Courier("KD6-3.7", "Joi");
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        validateResponseCode(response, 200);
+        validateResponseValueNotNull(response, "id");
+        printResponseBodyToConsole(response);
     }
 
     @Test
-    @DisplayName("****")
-    @Description("Логин существует, пароль неверный")
-    public void loginIncorrectPasswordFail() {
-//        Courier courier = new Courier("KD6-3.7", "Joi", "Nexus-9 replicant");
-        String json = "{\"login\":\"KD6-3.7\",\"password\":\"incorrectpassword\"}";
-        ValidatableResponse response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(json)
-                .when()
-                .post(getCourierLoginEndpoint())
-                .then()
-                .statusCode(404)
-                .and()
-                .assertThat().body("message", equalTo("Учетная запись не найдена"));
-    }
-
-    @Test
-    @DisplayName("****")
     @Description("Логин неверный")
+    @TmsLink("TestCase-Login-2")
     public void loginIncorrectLoginFail() {
-//        Courier courier = new Courier("KD6-3.7", "Joi", "Nexus-9 replicant");
-        String json = "{\"login\":\"incorrectlogin\",\"password\":\"incorrectpassword\"}";
-        ValidatableResponse response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(json)
-                .when()
-                .post(getCourierLoginEndpoint())
-                .then()
-                .statusCode(404)
-                .and()
-                .assertThat().body("message", equalTo("Учетная запись не найдена"));
+        Courier courier = new Courier("INCORRECT_LOGIN", "Joi");
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        validateResponseCode(response, 404);
+        validateResponseValue(response, "message", "Учетная запись не найдена");
+        printResponseBodyToConsole(response);
+    }
+
+    @Test
+    @Description("Логин существует, пароль неверный")
+    @TmsLink("TestCase-Login-3")
+    public void loginIncorrectPasswordFail() {
+        Courier courier = new Courier("KD6-3.7", "INCORRECT_PASSWORD");
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        validateResponseCode(response, 404);
+        validateResponseValue(response, "message", "Учетная запись не найдена");
+        printResponseBodyToConsole(response);
+    }
+
+    @Test
+    @Description("Логин существует, пароль пусто")
+    @TmsLink("TestCase-Login-4")
+    public void loginEmptyPasswordFail() {
+        Courier courier = new Courier("KD6-3.7", "");
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        validateResponseCode(response, 400);
+        validateResponseValue(response, "message", "Недостаточно данных для входа");
+        printResponseBodyToConsole(response);
+    }
+
+    @Test
+    @Description("Логин пустой, пароль верный")
+    @TmsLink("TestCase-Login-5")
+    public void loginEmptyLoginFail() {
+        Courier courier = new Courier("", "Joi");
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        validateResponseCode(response, 400);
+        validateResponseValue(response, "message", "Недостаточно данных для входа");
+        printResponseBodyToConsole(response);
     }
 }
