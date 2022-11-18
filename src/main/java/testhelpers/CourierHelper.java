@@ -9,9 +9,14 @@ import static testhelpers.GeneratorHelper.stringGenerator;
 
 public class CourierHelper {
 
-    @Step("Returns existing courier")
-    public static Courier getExistingCourier() {
-        return new Courier("KD6-3.7", "Joi");
+    private static Integer idCourier = 0;
+
+    public static Integer getIdCourier() {
+        return idCourier;
+    }
+
+    public static void setIdCourier(Integer idCourier) {
+        CourierHelper.idCourier = idCourier;
     }
 
     @Step("Generate random courier")
