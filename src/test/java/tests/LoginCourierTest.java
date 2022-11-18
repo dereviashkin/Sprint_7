@@ -7,22 +7,33 @@ import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 
+import static data.Endpoints.getCourierCreateEndpoint;
 import static data.Endpoints.getCourierLoginEndpoint;
 import static data.TextResponses.ACCOUNT_NOT_FOUND;
 import static data.TextResponses.LACK_OF_DATA_FOR_LOGIN;
-import static testhelpers.CourierHelper.getExistingCourier;
+import static testhelpers.CourierHelper.generateRandomCourier;
+import static testhelpers.CourierHelper.printCourierData;
 import static testhelpers.GeneratorHelper.stringGenerator;
 import static testhelpers.JsonHelper.*;
 
 public class LoginCourierTest extends BaseTest {
 
     @Test
-    @Description("Логин существующим курьером, все поля заполнены правильно")
+    @Description("Логин курьером, все поля заполнены правильно")
     @TmsLink("TestCase-Login-1")
     public void loginCorrectSuccess() {
-        Response response = sendPostRequestEndpoint(getExistingCourier(), getCourierLoginEndpoint());
+        //Создаем экземпляр курьера
+        Courier courier = generateRandomCourier();
+        //Запрос на создание курьера
+        sendPostRequestEndpoint(courier, getCourierCreateEndpoint());
+        //Выполняем запрос
+        Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        //Проверяем код ответа
         validateResponseCode(response, HttpStatus.SC_OK);
-        validateResponseValueNotNull(response, "id");
+        validateResponseIdNotNull(response);
+        //Выводим json-тело курьера
+        printCourierData(courier);
+        //Выводим тело ответа
         printResponseBodyToConsole(response);
     }
 
@@ -30,11 +41,15 @@ public class LoginCourierTest extends BaseTest {
     @Description("Логин неверный")
     @TmsLink("TestCase-Login-2")
     public void loginIncorrectLoginFail() {
-        Courier courier = getExistingCourier();
-        courier.setLogin(stringGenerator(4));
+        //Создаем экземпляр курьера
+        Courier courier = generateRandomCourier();
+        //Выполняем запрос
         Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        //Проверяем код ответа
         validateResponseCode(response, HttpStatus.SC_NOT_FOUND);
-        validateResponseValue(response, "message", ACCOUNT_NOT_FOUND);
+        //Проверяем тело ответа
+        validateResponseMessageValue(response, ACCOUNT_NOT_FOUND);
+        //Выводим тело ответа
         printResponseBodyToConsole(response);
     }
 
@@ -42,11 +57,21 @@ public class LoginCourierTest extends BaseTest {
     @Description("Логин существует, пароль неверный")
     @TmsLink("TestCase-Login-3")
     public void loginIncorrectPasswordFail() {
-        Courier courier = getExistingCourier();
+        //Создаем экземпляр курьера
+        Courier courier = generateRandomCourier();
+        //Запрос на создание курьера
+        sendPostRequestEndpoint(courier, getCourierCreateEndpoint());
+        //Ломаем пароль
         courier.setPassword(stringGenerator(4));
+        //Выполняем запрос
         Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        //Проверяем код ответа
         validateResponseCode(response, HttpStatus.SC_NOT_FOUND);
-        validateResponseValue(response, "message", ACCOUNT_NOT_FOUND);
+        //Проверяем тело ответа
+        validateResponseMessageValue(response, ACCOUNT_NOT_FOUND);
+        //Выводим json-тело курьера
+        printCourierData(courier);
+        //Выводим тело ответа
         printResponseBodyToConsole(response);
     }
 
@@ -54,11 +79,21 @@ public class LoginCourierTest extends BaseTest {
     @Description("Логин существует, пароль пусто")
     @TmsLink("TestCase-Login-4")
     public void loginEmptyPasswordFail() {
-        Courier courier = getExistingCourier();
+        //Создаем экземпляр курьера
+        Courier courier = generateRandomCourier();
+        //Запрос на создание курьера
+        sendPostRequestEndpoint(courier, getCourierCreateEndpoint());
+        //Обнуляем пароль
         courier.setPassword("");
+        //Выполняем запрос
         Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        //Проверяем код ответа
         validateResponseCode(response, HttpStatus.SC_BAD_REQUEST);
-        validateResponseValue(response, "message", LACK_OF_DATA_FOR_LOGIN);
+        //Проверяем тело ответа
+        validateResponseMessageValue(response, LACK_OF_DATA_FOR_LOGIN);
+        //Выводим json-тело курьера
+        printCourierData(courier);
+        //Выводим тело ответа
         printResponseBodyToConsole(response);
     }
 
@@ -66,11 +101,21 @@ public class LoginCourierTest extends BaseTest {
     @Description("Логин пустой, пароль верный")
     @TmsLink("TestCase-Login-5")
     public void loginEmptyLoginFail() {
-        Courier courier = getExistingCourier();
+        //Создаем экземпляр курьера
+        Courier courier = generateRandomCourier();
+        //Запрос на создание курьера
+        sendPostRequestEndpoint(courier, getCourierCreateEndpoint());
+        //Обнуляем логин
         courier.setLogin("");
+        //Выполняем запрос
         Response response = sendPostRequestEndpoint(courier, getCourierLoginEndpoint());
+        //Проверяем код ответа
         validateResponseCode(response, HttpStatus.SC_BAD_REQUEST);
-        validateResponseValue(response, "message", LACK_OF_DATA_FOR_LOGIN);
+        //Проверяем тело ответа
+        validateResponseMessageValue(response, LACK_OF_DATA_FOR_LOGIN);
+        //Выводим json-тело курьера
+        printCourierData(courier);
+        //Выводим тело ответа
         printResponseBodyToConsole(response);
     }
 }
