@@ -1,12 +1,20 @@
 package tests;
 
 import io.restassured.RestAssured;
-import org.junit.Before;
+import org.junit.After;
+import org.junit.BeforeClass;
+
+import static testhelpers.JsonHelper.removeCourierAndOrderById;
 
 public abstract class BaseTest {
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru/";
+    }
+
+    @After
+    public void cleanUp() {
+        removeCourierAndOrderById();
     }
 }
