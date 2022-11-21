@@ -9,7 +9,7 @@ public class Orders {
     private Integer rentTime;
     private String deliveryDate;
     private String comment;
-    private String[] color ;
+    private String[] color;
 
     public Orders(String firstName, String lastName, String address, String metroStation, String phone, Integer rentTime, String deliveryDate, String comment, String[] color) {
         this.firstName = firstName;
