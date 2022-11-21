@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import entities.Courier;
 import io.qameta.allure.Step;
 
+import static testhelpers.GeneratorHelper.randomFirstName;
 import static testhelpers.GeneratorHelper.stringGenerator;
 
 public class CourierHelper {
@@ -21,7 +22,7 @@ public class CourierHelper {
 
     @Step("Generate random courier")
     public static Courier generateRandomCourier() {
-        return new Courier(stringGenerator(6), stringGenerator(6), stringGenerator(6));
+        return new Courier(stringGenerator(6), stringGenerator(6), randomFirstName());
     }
 
     @Step("Print courier data")
