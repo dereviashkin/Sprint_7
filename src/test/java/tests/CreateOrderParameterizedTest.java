@@ -8,8 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import static data.Endpoints.getOrdersCreateEndpoint;
-import static testhelpers.JsonHelper.sendPostRequestEndpoint;
-import static testhelpers.JsonHelper.validateResponseCode;
+import static testhelpers.JsonHelper.*;
 import static testhelpers.OrdersHelper.*;
 
 @RunWith(Parameterized.class)
@@ -36,5 +35,6 @@ public class CreateOrderParameterizedTest extends BaseTest {
     public void createOrderParameterized() {
         Response response = sendPostRequestEndpoint(orders, getOrdersCreateEndpoint());
         validateResponseCode(response, statusCode);
+        validateResponseOrdersNotNull(response);
     }
 }
