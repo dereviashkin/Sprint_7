@@ -2,15 +2,15 @@ package testhelpers;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.Assert;
 
-import static data.Endpoints.getCourierCreateEndpoint;
-import static data.Endpoints.getOrdersCancelEndpoint;
+import static data.Endpoints.*;
 import static io.restassured.RestAssured.given;
 import static testhelpers.CourierHelper.getIdCourier;
 import static testhelpers.CourierHelper.setIdCourier;
-import static testhelpers.OrderHelper.getIdOrder;
-import static testhelpers.OrderHelper.setIdOrder;
+import static testhelpers.OrdersHelper.getIdOrder;
+import static testhelpers.OrdersHelper.setIdOrder;
 
 public class JsonHelper {
 
@@ -20,6 +20,17 @@ public class JsonHelper {
                 .header("Content-type", "application/json")
                 .body(serializedJson)
                 .post(endpoint);
+    }
+
+    @Step("Send POST request to create new order")
+    public static void sendPostCreateOrderEndpoint(Object serializedJson) {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .body(serializedJson)
+                .post(getOrdersCreateEndpoint());
+        validateResponseCode(response, HttpStatus.SC_CREATED);
+        validateResponseTrackNotNull(response);
+        printResponseBodyToConsole(response);
     }
 
     @Step("Send GET request to required endpoint")
