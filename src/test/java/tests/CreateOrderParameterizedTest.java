@@ -24,10 +24,10 @@ public class CreateOrderParameterizedTest extends BaseTest {
     @Parameterized.Parameters
     public static Object[][] getTestDate() {
         return new Object[][]{
-                {randomBlackOrder(), HttpStatus.SC_OK},
-                {randomGreyOrder(), HttpStatus.SC_OK},
-                {randomBlackGreyOrder(), HttpStatus.SC_OK},
-                {randomEmptyColorOrder(), HttpStatus.SC_OK},
+                {randomBlackOrder(), HttpStatus.SC_CREATED},
+                {randomGreyOrder(), HttpStatus.SC_CREATED},
+                {randomBlackGreyOrder(), HttpStatus.SC_CREATED},
+                {randomEmptyColorOrder(), HttpStatus.SC_CREATED},
         };
     }
 
@@ -35,6 +35,6 @@ public class CreateOrderParameterizedTest extends BaseTest {
     public void createOrderParameterized() {
         Response response = sendPostRequestEndpoint(orders, getOrdersCreateEndpoint());
         validateResponseCode(response, statusCode);
-        validateResponseOrdersNotNull(response);
+        validateResponseTrackNotNull(response);
     }
 }
